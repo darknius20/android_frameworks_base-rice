@@ -545,7 +545,7 @@ public class NotificationPanelViewController extends PanelViewController {
     private int mDisplayId;
     private boolean mDoubleTapToSleepEnabled;
 
-    private GestureDetector mDoubleTapGestureListener;
+    private GestureDetector mDoubleTapGesture;
 
     /**
      * Cache the resource id of the theme to avoid unnecessary work in onThemeChanged.
@@ -891,7 +891,7 @@ public class NotificationPanelViewController extends PanelViewController {
         });
         mBottomAreaShadeAlphaAnimator.setDuration(160);
         mBottomAreaShadeAlphaAnimator.setInterpolator(Interpolators.ALPHA_OUT);
-        mDoubleTapGestureListener = new GestureDetector(mView.getContext(),
+        mDoubleTapGesture = new GestureDetector(mView.getContext(),
                 new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDoubleTap(MotionEvent event) {
@@ -4247,8 +4247,8 @@ public class NotificationPanelViewController extends PanelViewController {
                     return false;
                 }
 
-                if (mDoubleTapToSleepEnabled && mBarState == StatusBarState.KEYGUARD) {
-                    mDoubleTapGestureListener.onTouchEvent(event);
+                if (mDoubleTapToSleepEnabled && !mPulsing && !mDozing) {
+                    mDoubleTapGesture.onTouchEvent(event);
                 }
 
                 // Make sure the next touch won't the blocked after the current ends.

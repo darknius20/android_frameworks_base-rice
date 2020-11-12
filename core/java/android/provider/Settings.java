@@ -5544,6 +5544,18 @@ public final class Settings {
         public static final String MEDIA_ARTWORK_BLUR_RADIUS = "media_artwork_blur_radius";
 
         /**
+         * reTicker Status
+         * @hide
+         */
+        public static final String RETICKER_STATUS = "reticker_status";
+
+        /**
+         * reTicker Colored
+         * @hide
+         */
+        public static final String RETICKER_COLORED = "reticker_colored";
+
+        /**
          * Keys we no longer back up under the current schema, but want to continue to
          * process when restoring historical backup datasets.
          *

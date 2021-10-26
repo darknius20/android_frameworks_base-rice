@@ -959,7 +959,7 @@ class MediaCarouselController @Inject constructor(
             }
             mainHandler.post {
                 artworkSettings = newSettings
-                recreatePlayers()
+                updatePlayers(recreateMedia = true)
             }
         }
     }

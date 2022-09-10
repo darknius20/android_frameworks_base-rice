@@ -51,6 +51,7 @@ import com.android.systemui.util.LargeScreenUtils;
 import com.android.systemui.tuner.TunerService;
 
 import lineageos.providers.LineageSettings;
+import android.provider.Settings;
 
 import java.util.List;
 
@@ -59,6 +60,9 @@ import java.util.List;
  * battery, carrier info and privacy icons) and also contains the {@link QuickQSPanel}.
  */
 public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tunable {
+
+    private static final String QS_WEATHER_POSITION =
+            "system:" + Settings.System.QS_WEATHER_POSITION;
 
     private boolean mExpanded;
     private boolean mQsDisabled;
@@ -95,6 +99,8 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
     private BatteryMeterView mBatteryRemainingIcon;
     private StatusIconContainer mIconContainer;
     private View mPrivacyChip;
+    
+    private int mQQSWeather;
 
     @Nullable
     private TintedIconManager mTintedIconManager;
@@ -172,7 +178,8 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
                 .build();
 
         Dependency.get(TunerService.class).addTunable(this,
-                StatusBarIconController.ICON_HIDE_LIST);
+                StatusBarIconController.ICON_HIDE_LIST,
+                QS_WEATHER_POSITION);
     }
 
     void onAttach(TintedIconManager iconManager,
@@ -576,9 +583,33 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
         mDatePrivacyView.setScrollY(scrollY);
     }
 
+    private void updateQSWeatherPosition() {
+        if (mQQSWeather == 0) {
+            mQsWeatherHeaderView.setVisibility(View.GONE);
+            mQsWeatherView.setVisibility(View.VISIBLE);
+        } else if (mQQSWeather == 1) {
+            mQsWeatherHeaderView.setVisibility(View.VISIBLE);
+            mQsWeatherView.setVisibility(View.GONE);
+        } else {
+            mQsWeatherHeaderView.setVisibility(View.VISIBLE);
+            mQsWeatherView.setVisibility(View.VISIBLE);
+        }
+    }
+    
     @Override
     public void onTuningChanged(String key, String newValue) {
         mClockView.setClockVisibleByUser(!StatusBarIconController.getIconHideList(
                 mContext, newValue).contains("clock"));
+
+        switch (key) {
+            case QS_WEATHER_POSITION:
+                mQQSWeather =
+                       TunerService.parseInteger(newValue, 2);
+                updateQSWeatherPosition();
+                break;
+            default:
+                break;
+        }
+
     }
 }

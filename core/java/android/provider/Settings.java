@@ -5789,6 +5789,9 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_ENABLE_POWER_MENU = "lockscreen_enable_power_menu";
 
+        /** @hide */
+        public static final String OMNI_NAVIGATION_BAR_RECENTS = "navigation_bar_recents";
+
         /**
          * Gesture navbar length mode.
          * Supported modes: 0 for normal length, 1 for medium and 2 for long.

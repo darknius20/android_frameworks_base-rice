@@ -16,9 +16,11 @@
 
 package com.android.internal.util.crdroid;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.IActivityManager;
 import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.app.NotificationManager;
@@ -35,6 +37,9 @@ import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.os.Vibrator;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.UserHandle;
 
 import com.android.internal.R;
 import com.android.internal.statusbar.IStatusBarService;
@@ -244,5 +249,76 @@ public class Utils {
         SensorManager sm = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         return sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null
                 && sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null;
+    }
+
+
+    // Omni Switch Constants
+
+    /**
+     * Package name of the omnniswitch app
+     */
+    public static final String APP_PACKAGE_NAME = "org.omnirom.omniswitch";
+
+    /**
+     * Intent broadcast action for toogle the omniswitch overlay
+     */
+    private static final String ACTION_TOGGLE_OVERLAY2 = APP_PACKAGE_NAME + ".ACTION_TOGGLE_OVERLAY2";
+
+    /**
+     * Intent broadcast action for telling omniswitch to preload tasks
+     */
+    private static final String ACTION_PRELOAD_TASKS = APP_PACKAGE_NAME + ".ACTION_PRELOAD_TASKS";
+
+    /**
+     * Intent broadcast action for hide the omniswitch overlay
+     */
+    private static final String ACTION_HIDE_OVERLAY = APP_PACKAGE_NAME + ".ACTION_HIDE_OVERLAY";
+
+    /**
+     * @hide
+     * Intent for launching the omniswitch settings actvity
+     */
+    public static Intent INTENT_LAUNCH_APP = new Intent(Intent.ACTION_MAIN)
+            .setClassName(APP_PACKAGE_NAME, APP_PACKAGE_NAME + ".SettingsActivity");
+
+
+    /**
+     * @hide
+     */
+    public static boolean isOmniSwitchRunning(Context context) {
+        final ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (service.service.getClassName().equals(APP_PACKAGE_NAME + ".SwitchService")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @hide
+     */
+    public static void toggleOmniSwitchRecents(Context context, UserHandle user) {
+        final Intent intent = new Intent(Utils.ACTION_TOGGLE_OVERLAY2);
+        intent.setPackage(APP_PACKAGE_NAME);
+        context.sendBroadcastAsUser(intent, user);
+    }
+
+    /**
+     * @hide
+     */
+    public static void hideOmniSwitchRecents(Context context, UserHandle user) {
+        final Intent intent = new Intent(Utils.ACTION_HIDE_OVERLAY);
+        intent.setPackage(APP_PACKAGE_NAME);
+        context.sendBroadcastAsUser(intent, user);
+    }
+
+    /**
+     * @hide
+     */
+    public static void preloadOmniSwitchRecents(Context context, UserHandle user) {
+        final Intent intent = new Intent(Utils.ACTION_PRELOAD_TASKS);
+        intent.setPackage(APP_PACKAGE_NAME);
+        context.sendBroadcastAsUser(intent, user);
     }
 }

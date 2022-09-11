@@ -738,11 +738,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     // Lineage additions
     private static final int MSG_TOGGLE_TORCH = 100;
     private static final int MSG_CAMERA_LONG_PRESS = 101;
+    
 
     private CameraManager mCameraManager;
     private String mRearFlashCameraId;
     private boolean mTorchLongPressPowerEnabled;
     private boolean mTorchEnabled;
+    private boolean mOmniSwitchRecents;
     private int mTorchTimeout;
     private PendingIntent mTorchOffPendingIntent;
 
@@ -973,6 +975,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.DOZE_TRIGGER_DOUBLETAP), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.OMNI_NAVIGATION_BAR_RECENTS), false, this,
                     UserHandle.USER_ALL);
             updateSettings();
         }
@@ -2737,6 +2742,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mGlobalActionsOnLockEnable = Settings.System.getIntForUser(resolver,
                     Settings.System.LOCKSCREEN_ENABLE_POWER_MENU, 1,
                     UserHandle.USER_CURRENT) != 0;
+            mOmniSwitchRecents = Settings.System.getIntForUser(resolver,
+                    Settings.System.OMNI_NAVIGATION_BAR_RECENTS, 0,
+                    UserHandle.USER_CURRENT) == 1;
         }
         if (updateRotation) {
             updateRotation(true);
